@@ -2,13 +2,32 @@ public class LoopDetector
 {
 	int[][] array;
 	boolean done;
-	int n, initialRow, initialColumn;
+	int n;
 	public LoopDetector(int[][] array)
 	{
-		this.array = array;
+		this.array = new int[array[0].length][array.length];
+		for(int x = 0; x < array[0].length; x++)
+		{
+			for(int y = 0; y < array.length; y++)
+			{
+				this.array[x][y] = array[x][y];
+			}
+		}
 		n = 0;
 	}
-	public boolean isLooped(int column, int row)
+	public void refresh(int[][] array)
+	{
+		this.array = new int[array[0].length][array.length];
+		for(int x = 0; x < array[0].length; x++)
+		{
+			for(int y = 0; y < array.length; y++)
+			{
+				this.array[x][y] = array[x][y];
+			}
+		}
+		n = 0;
+	}
+	public boolean isLooped(int column, int row, int initialColumn, int initialRow)
 	{
 		if(n == 0)
 		{
@@ -25,40 +44,41 @@ public class LoopDetector
 			}
 			else
 			{
-				if(n > 4)
+				if(n > 2)
 				{
-					array[0][0] = 1;
+					array[initialColumn][initialRow] = 1;
+					//Fix
 				}
-				done = isLooped(column + 1, row);
+				done = isLooped(column + 1, row, initialColumn, initialRow);
 				if(!done)
 				{
-					done = isLooped(column, row + 1);
-				}
-				if(!done)
-				{
-					done = isLooped(column - 1, row);
+					done = isLooped(column, row + 1, initialColumn, initialRow);
 				}
 				if(!done)
 				{
-					done = isLooped(column, row - 1);
+					done = isLooped(column - 1, row, initialColumn, initialRow);
+				}
+				if(!done)
+				{
+					done = isLooped(column, row - 1, initialColumn, initialRow);
 				}
 				///*
 
 				if(!done)
 				{
-					done = isLooped(column + 1, row + 1);
+					done = isLooped(column + 1, row + 1, initialColumn, initialRow);
 				}
 				if(!done)
 				{
-					done = isLooped(column - 1, row + 1);
+					done = isLooped(column - 1, row + 1, initialColumn, initialRow);
 				}
 				if(!done)
 				{
-					done = isLooped(column + 1, row - 1);
+					done = isLooped(column + 1, row - 1, initialColumn, initialRow);
 				}
 				if(!done)
 				{
-					done = isLooped(column - 1, row - 1);
+					done = isLooped(column - 1, row - 1, initialColumn, initialRow);
 				}
 			}
 			if(done)
@@ -78,6 +98,8 @@ public class LoopDetector
 			//System.out.println(array[column][row]);
 			if(array[column][row] == 1)
 			{
+				System.out.println("Row = " + row);
+				System.out.println("Column = " + column);
 				result = true;
 				//System.out.println("Result is true");
 			}
