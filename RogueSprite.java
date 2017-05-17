@@ -12,7 +12,7 @@ public class RogueSprite
 	double d1;
 	double d2;
 	int x, y, width, height;
-	public RogueSprite(int x,int y ,int width, int height)
+	public RogueSprite(int x, int y, int width, int height)
 	{
 		this.x = x;
 		this.y = y;
@@ -22,7 +22,7 @@ public class RogueSprite
 		back = tk.getImage("back5.png");
 		lBrick = tk.getImage("LongWall.png");
 		brick = tk.getImage("brick.png");
-		rectangle = new Rectangle(x,y,width,height);
+		rectangle = new Rectangle(x, y, width, height);
 	}
 	public Rectangle getRectangle()
 	{
@@ -54,9 +54,9 @@ public class RogueSprite
 	}
 	public void draw (Graphics g)
 	{
-		g.drawImage(brick,x,y,null);
+		g.drawImage(brick, x, y ,null);
 		g.setColor(Color.BLUE);
-		//rectangle = new Rectangle(x,y,w,h);
+		rectangle.setLocation(x, y);
 		((Graphics2D)g).draw(rectangle);
 	}
 }
