@@ -1,18 +1,23 @@
 public class RogueCharacter extends RogueSprite
 {
-	int Speed;
+	int speedMultiplier;
+	int SpeedX;
+	int SpeedY;
 	int Health;
 	int ASpeed;
 	int MaxHealth;
-	public RogueCharacter(int startSpeed, int startASpeed, int startHealth)
+	public RogueCharacter(int startHealth)
 	{
-		Speed = startSpeed;
-		ASpeed = startASpeed;
 		Health = startHealth;
 	}
-	public void setSpeed(int newSpeed)
+	public void updatePos()
 	{
-		Speed = newSpeed;
+		setPosition(getPositionX()+SpeedX,getPositionY()+SpeedY);
+	}
+	public void setSpeed(int newSpeedX, int newSpeedY)
+	{
+		SpeedX = newSpeedX;
+		SpeedY = newSpeedY;
 	}
 	public void setHealth(int newHealth)
 	{
@@ -30,9 +35,13 @@ public class RogueCharacter extends RogueSprite
 	{
 		return MaxHealth;
 	}
-	public int getSpeed()
+	public int getSpeedX()
 	{
-		return Speed;
+		return SpeedX;
+	}
+	public int getSpeedY()
+	{
+		return SpeedY;
 	}
 	public int getHealth()
 	{

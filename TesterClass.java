@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class TesterClass extends JApplet implements KeyListener, ActionListener
 {
-	int facing;
+	String facing;
 	Timer t;
 	ArrayList<String> pressed;
 	ArrayList<String> possible;
@@ -34,9 +34,7 @@ public class TesterClass extends JApplet implements KeyListener, ActionListener
 	}
 	public String FacingDirection()
 	{
-		int d = pressed.size();
-		String direction = pressed.get(d);
-		return direction;
+		return facing;
 	}
 	public void actionPerformed(ActionEvent e)
 	{
@@ -50,6 +48,7 @@ public class TesterClass extends JApplet implements KeyListener, ActionListener
 					if(pressed.get(i).equalsIgnoreCase(possible.get(x)))
 					{
 						System.out.println(pressed.get(i));
+						facing = pressed.get(pressed.size()-1);
 					}
 				}
 			}
