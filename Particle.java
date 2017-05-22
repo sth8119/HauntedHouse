@@ -35,15 +35,15 @@ public class Particle
 			xvel = -1 * Math.cos(angle);
 			yvel = -1 * Math.sin(angle);
 		}
-		xvel *= 2;
-		yvel *= 2;
+		//xvel *= 2;
+		//yvel *= 2;
 		xpos = x;
 		ypos = y;
 	}
 	public void tick()
 	{
 		xraw += xvel;
-		yraw += yraw;
+		yraw += yvel;
 		xpos = (int)Math.round(xraw);
 		ypos = (int)Math.round(yraw);
 	}
