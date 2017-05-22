@@ -4,24 +4,59 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.applet.*;
 import java.util.Random;
-public class ParticleTest extends JApplet
+import java.awt.event.MouseEvent;
+public class ParticleTest extends JApplet implements MouseListener
 {
 	ArrayList<Particle> particleList;
 	boolean fire;
+	int particleN;
 
 	public void init()
 	{
 		fire = false;
-		particleList = new ArrayList<Particle>(1);
-		fire();
+		particleList = new ArrayList<Particle>();
+		particleN = 200;
+		initializeParticles();
 		setLayout(null);
+		addMouseListener(this);
 		setContentPane(new DrawingPanel());
+	}
+	public void mousePressed(MouseEvent e)
+	{
+		for(int i = 0; i < particleN; i++)
+		{
+			particleList.add(new Particle(e.getX(), e.getY()));
+		}
+		fire = true;
+		fire();
+	}
+	public void initializeParticles()
+	{
+
 	}
 	public void fire()
 	{
-		particleList.add(new Particle(10, 10));
-		fire = true;
+		for(int index = 0; index < particleN; index++)
+		{
+			particleList.get(index).tick();
+		}
 		repaint();
+	}
+	public void mouseClicked(MouseEvent e)
+	{
+
+	}
+	public void mouseEntered(MouseEvent e)
+	{
+
+	}
+	public void mouseReleased(MouseEvent e)
+	{
+
+	}
+	public void mouseExited(MouseEvent e)
+	{
+
 	}
 	public class DrawingPanel extends JPanel
 	{
@@ -30,9 +65,12 @@ public class ParticleTest extends JApplet
 			super.paintComponent(g);
 			if(fire)
 			{
-				particleList.get(0).tick();
+				fire();
+				for(int i = 0; i < particleN; i++)
+				{
+					particleList.get(i).draw(g);
+				}
 			}
-			particleList.get(0).draw(g);
 		}
 	}
 }
