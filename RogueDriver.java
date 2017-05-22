@@ -1,48 +1,30 @@
-
-
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.applet.*;
 import java.util.ArrayList;
 import java.util.Random;
-
+import java.io.*;
+import javax.imageio.*;
+import java.awt.image.BufferedImage;
 
 public class RogueDriver extends JApplet
 {
-	Random r;
-	RogueSprite rog;
-	ArrayList<RogueSprite> Bricks;
-	int x,y ,w,h;
-
-
- 	public void init()
+	Toolkit tk;
+	Sprite sprite;
+	public void init()
 	{
-		r = new Random();
-		Bricks = new ArrayList<RogueSprite>();
-		setContentPane(new DrawingPanel());
-		for(int k = 0; k <50; k++)
+		tk = Toolkit.getDefaultToolkit();
+		//BufferedImage brickImage = (BufferedImage)tk.getImage("brick.png");
+		//BufferedImage brickImage = ImageIO.read(new File()) //Image file goes here
+		sprite = new Sprite(brickImage, 50, 50, brickImage.getWidth(), brickImage.getHeight());
+	}
+	public class DrawingPanel extends JPanel
+	{
+		public void paintComponent(Graphics g)
 		{
-			x = r.nextInt(1000);
-			y = r.nextInt(1000);
-			w = 100;
-			h = 26;
-			Bricks.add(new RogueSprite(x,y,w,h));
+			super.paintComponent(g);
+			sprite.draw(g);
 		}
-
-			setLayout(null);
-  }
-
-   public class DrawingPanel extends JPanel
-   {
-       public void paintComponent(Graphics g)
-       {
-   		 super.paintComponent(g);
-
-   		 for(int k = 0; k <50; k++)
-		 {
-			 Bricks.get(k).draw(g);
-		 }
-       }
-   }
+	}
 }
