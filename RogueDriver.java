@@ -10,30 +10,30 @@ import java.awt.image.BufferedImage;
 
 public class RogueDriver extends JApplet
 {
-	Toolkit tk;
-	Sprite sprite;
-	BufferedImage brickImage;
+	//IMPORTANT- Make sure Quinn uses the current Sprite class- it will be in the main branch of the Github repository
+	Sprite sprite; //16 Sprites- Name them similar to the file names I made to make it easier to keep track
+	BufferedImage brickImage; //16 BufferedImages
+	//Sprite[] animations = new Sprite[16]; //This array list will
 	public void init()
 	{
-		tk = Toolkit.getDefaultToolkit();
-		//BufferedImage brickImage = (BufferedImage)tk.getImage("brick.png");
-		//BufferedImage brickImage = ImageIO.read(new File()) //Image file goes here
+		setLayout(null);
+		setContentPane(new DrawingPanel());
 		try
 		{
-			brickImage = ImageIO.read(new File("brick.png"));
+			brickImage = ImageIO.read(new File("brick.png")); //Do this once for each character model - There should be 16 total
 		}
-		catch(FileNotFoundException e)
+		catch(Exception e)
 		{
 			System.out.println("File Not Found");
 		}
-		sprite = new Sprite(brickImage, 50, 50, brickImage.getWidth(), brickImage.getHeight());
+		sprite = new Sprite(brickImage, 50, 50, brickImage.getWidth(), brickImage.getHeight()); //50, 50 is just the initial x and y for the image
 	}
 	public class DrawingPanel extends JPanel
 	{
 		public void paintComponent(Graphics g)
 		{
 			super.paintComponent(g);
-			sprite.draw(g);
+			sprite.draw(g); //Use a timer to change the image ever few milliseconds for now. Once the image index reaches 16, it should go back to index = 0
 		}
 	}
 }
