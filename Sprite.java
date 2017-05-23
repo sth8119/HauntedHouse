@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.applet.*;
 import java.io.*;
 import javax.imageio.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Sprite
@@ -14,11 +15,13 @@ public class Sprite
 	int x;
 	int y;
 	Rectangle collider;
-	BufferedImage character;
+	ArrayList<BufferedImage> character;
+	BufferedImage current;
 
-	public Sprite(BufferedImage character, int x, int y, int width, int height)
+	public Sprite(ArrayList<BufferedImage> character, int x, int y, int width, int height)
 	{
 		this.character = character;
+		current = character.get(0);
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -55,7 +58,7 @@ public class Sprite
 	}
 	public void draw(Graphics g)
 	{
-		g.drawImage(character, x, y, null);
+		g.drawImage(current, x, y, null);
 		((Graphics2D)g).draw(collider);
 	}
 }
