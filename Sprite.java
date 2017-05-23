@@ -15,17 +15,15 @@ public class Sprite
 	int x;
 	int y;
 	Rectangle collider;
-	ArrayList<BufferedImage> character;
-	BufferedImage current;
+	BufferedImage character;
 
-	public Sprite(ArrayList<BufferedImage> character, int x, int y, int width, int height)
+	public Sprite(BufferedImage character, int x, int y)
 	{
 		this.character = character;
-		current = character.get(0);
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
+		width = character.getWidth();
+		height = character.getHeight();
 		collider = new Rectangle(x, y, width, height);
 	}
 	public void setPosition(int x, int y)
@@ -58,7 +56,7 @@ public class Sprite
 	}
 	public void draw(Graphics g)
 	{
-		g.drawImage(current, x, y, null);
+		g.drawImage(character, x, y, null);
 		((Graphics2D)g).draw(collider);
 	}
 }
