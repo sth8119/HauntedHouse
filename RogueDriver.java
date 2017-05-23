@@ -12,11 +12,20 @@ public class RogueDriver extends JApplet
 {
 	Toolkit tk;
 	Sprite sprite;
+	BufferedImage brickImage;
 	public void init()
 	{
 		tk = Toolkit.getDefaultToolkit();
 		//BufferedImage brickImage = (BufferedImage)tk.getImage("brick.png");
 		//BufferedImage brickImage = ImageIO.read(new File()) //Image file goes here
+		try
+		{
+			brickImage = ImageIO.read(new File("brick.png"));
+		}
+		catch(FileNotFoundException e)
+		{
+			System.out.println("File Not Found");
+		}
 		sprite = new Sprite(brickImage, 50, 50, brickImage.getWidth(), brickImage.getHeight());
 	}
 	public class DrawingPanel extends JPanel
