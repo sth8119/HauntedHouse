@@ -32,6 +32,7 @@ public class RogueDriver extends JApplet implements KeyListener
  ArrayList<String> pressed;
  ArrayList<String> possible;
  ArrayList<String> current;
+ Sprite test;
  public void init()
  {
   setFocusable(true);
@@ -53,11 +54,12 @@ public class RogueDriver extends JApplet implements KeyListener
   imageDisplayed = 0;
   setLayout(null);
   setContentPane(new DrawingPanel());
-  r2 = new Rectangle(x1,y1,50,50);
+
 
   try
   {
    brickImage = ImageIO.read(new File("brick.png"));
+   test = new Sprite(brickImage,x1,y1);
    animations.add(ImageIO.read(new File("Player1_Down.png")));
    animations.add(ImageIO.read(new File("Player1_DownRun.png")));
    animations.add(ImageIO.read(new File("Player1_Down2.png")));
@@ -110,7 +112,8 @@ public class RogueDriver extends JApplet implements KeyListener
   {
    super.paintComponent(g);
    sprites.get(imageDisplayed).draw(g);
-   ((Graphics2D)g).draw(r2);
+   test.draw(g);
+
   }
  }
  public class Runner implements Runnable
@@ -156,14 +159,14 @@ public class RogueDriver extends JApplet implements KeyListener
           imageDisplayed = 13;
         }
      }
-//the collision wont work unless we know which side they are colliding with also i can't use the collide method until we turn the sprites into Rogue Sprites
-     /*for(int x = 0; x < animations.size(); x++)
+
+     for(int x = 0; x < sprites.size(); x++)
      {
-       if(animations.get(x).collide(r2) == true)
+       if(sprites.get(x).collidesLeft(test) == true)
        {
-         p1X= p1X-1;
+         //p1X= p1X-1;
        }
-     }*/
+     }
      repaint();
      if(imageDisplayed == 16)
      {
@@ -171,45 +174,45 @@ public class RogueDriver extends JApplet implements KeyListener
      }
      for(int a = 0; a < pressed.size(); a++)
         {
-           if(pressed.get(a).equalsIgnoreCase("up"))
+           if(pressed.get(a).equalsIgnoreCase("up")&& sprites.get(imageDisplayed).collidesLeft(test) == false)
            {
-             p1Y = p1Y - 20;
+             p1Y = p1Y - 10;
              facing = 2;
              imageDisplayed = 5;
             }
            else if(pressed.get(a).equalsIgnoreCase("left"))
             {
-             p1X = p1X - 20;
+             p1X = p1X - 10;
              facing = 3;
              imageDisplayed = 9;
             }
             else if(pressed.get(a).equalsIgnoreCase("down"))
             {
-              p1Y = p1Y + 20;
+              p1Y = p1Y + 10;
               facing = 1;
               imageDisplayed = 0;
             }
             else if(pressed.get(a).equalsIgnoreCase("right"))
             {
-             p1X = p1X + 20;
+             p1X = p1X + 10;
              facing = 4;
              imageDisplayed = 13;
             }
             else if(pressed.get(a).equalsIgnoreCase("w"))
             {
-             p2Y = p2Y - 20;
+             p2Y = p2Y - 10;
             }
             else if(pressed.get(a).equalsIgnoreCase("a"))
             {
-              p2X = p2X - 20;
+              p2X = p2X - 10;
             }
             else if(pressed.get(a).equalsIgnoreCase("s"))
             {
-             p2Y = p2Y + 20;
+             p2Y = p2Y + 10;
             }
             else if(pressed.get(a).equalsIgnoreCase("d"))
             {
-              p2X = p2X + 20;
+              p2X = p2X + 10;
             }
       }
      for(int a = 0; a < pressed.size();)
