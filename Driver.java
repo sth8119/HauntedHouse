@@ -14,7 +14,7 @@ public class Driver extends JApplet implements KeyListener
 	//IMPORTANT- Make sure Quinn uses the current Sprite class- it will be in the main branch of the Github repository
 	Sprite sprite; //16 Sprites- Name them similar to the file names I made to make it easier to keep track
 	BufferedImage brickImage; //16 BufferedImages
-	MapGenerator gen;
+	//MapGenerator gen;
 	ArrayList<BufferedImage> animations; //This array list will
 	ArrayList<Sprite> sprites;
 	ArrayList<Integer> keys;
