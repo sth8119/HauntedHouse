@@ -1,0 +1,323 @@
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.applet.*;
+import javax.swing.KeyStroke;
+import java.util.ArrayList;
+import java.util.Random;
+import java.io.*;
+import javax.imageio.*;
+import java.awt.image.BufferedImage;
+
+public class Driver extends JApplet implements KeyListener
+{
+	//IMPORTANT- Make sure Quinn uses the current Sprite class- it will be in the main branch of the Github repository
+	Sprite sprite; //16 Sprites- Name them similar to the file names I made to make it easier to keep track
+	BufferedImage brickImage; //16 BufferedImages
+	MapGenerator gen;
+	ArrayList<BufferedImage> animations; //This array list will
+	ArrayList<Sprite> sprites;
+	ArrayList<Integer> keys;
+	Sprite testBrick;
+	Sprite[][] map;
+	int[][] numberMap;
+	int xPos, yPos;
+	int characterImageDisplayed;
+	int facing = 0;
+	int speed = 5;
+	long timeheld = 0;
+	final int XSIZE = 150;
+	final int YSIZE = 150;
+	final int XINIT = 50;
+	final int YINIT = 50;
+	final int XROWS = 10;
+	final int YROWS = 6;
+	final int W = 87;
+	final int A = 65;
+	final int S = 83;
+	final int D = 68;
+	final int UP = 38;
+	final int DOWN = 40;
+	final int LEFT = 37;
+	final int RIGHT = 39;
+	final int FACE_RIGHT = 0;
+	final int FACE_DOWN = 1;
+	final int FACE_LEFT = 2;
+	final int FACE_UP = 3;
+	Runner thread;
+	public void init()
+	{
+		animations  = new ArrayList<BufferedImage>();
+		sprites = new ArrayList<Sprite>();
+		keys = new ArrayList<Integer>();
+		//gen = new MapGenerator();
+		//map = new Sprite[XROWS][YROWS];
+		//numberMap = new int[XROWS][YROWS];
+		xPos = 50;
+		yPos = 50;
+		thread = new Runner();
+		setLayout(null);
+		setFocusable(true);
+		setSize(2000, 1200);
+		addKeyListener(this);
+		setContentPane(new DrawingPanel());
+		try
+		{
+			brickImage = ImageIO.read(new File("brick.png"));
+			animations.add(ImageIO.read(new File("Player1_Down.png")));
+			animations.add(ImageIO.read(new File("Player1_DownRun.png")));
+			animations.add(ImageIO.read(new File("Player1_Down2.png")));
+			animations.add(ImageIO.read(new File("Player1_DownRun2.png")));
+			animations.add(ImageIO.read(new File("Player1_Up.png")));
+			animations.add(ImageIO.read(new File("Player1_UpRun.png")));
+			animations.add(ImageIO.read(new File("Player1_Up2.png")));
+			animations.add(ImageIO.read(new File("Player1_UpRun2.png")));
+			animations.add(ImageIO.read(new File("Player1_Left.png")));
+			animations.add(ImageIO.read(new File("Player1_LeftRun.png")));
+			animations.add(ImageIO.read(new File("Player1_Left2.png")));
+			animations.add(ImageIO.read(new File("Player1_LeftRun2.png")));
+			animations.add(ImageIO.read(new File("Player1_Right.png")));
+			animations.add(ImageIO.read(new File("Player1_RightRun.png")));
+			animations.add(ImageIO.read(new File("Player1_Right2.png")));
+			animations.add(ImageIO.read(new File("Player1_RightRun2.png")));
+
+			//Do this once for each character model - There should be 16 total
+		}
+		catch(Exception e)
+		{
+			System.out.println("File Not Found");
+		}
+		for(int index = 0; index < animations.size(); index++)
+		{
+			sprites.add(new Sprite(animations.get(index), index, index));
+		}
+		testBrick = new Sprite(brickImage, 300, 300);
+		/*
+		gen.create();
+		numberMap = gen.getMap();
+		System.out.println(map[0].length);
+		System.out.println(map.length);
+		for(int y1 = 0; y1 < map[0].length; y1++)
+		{
+			for(int x1 = 0; x1 < map.length; x1++)
+			{
+				//System.out.println("x1 = " + x1);
+				//System.out.println("y1 = " + y1);
+				if(y1 == 8)
+				{
+					System.out.println("Fuck");
+				}
+				map[x1][y1] = new Sprite(brickImage, x1, y1);
+				xPos += XSIZE;
+				map[x1][y1].setPosition(xPos, yPos);
+				//System.out.println("xPos = " + xPos);
+			}
+			xPos = XINIT;
+			yPos += YSIZE;
+		}
+		*/
+		thread.start();
+	}
+	public void keyPressed(KeyEvent e) //Multi-Key Listener
+	{
+		boolean isRegistered = false;
+		int keyPressedValue = e.getKeyCode();
+		timeheld++;
+		for(int keyIndex = 0; keyIndex < keys.size(); keyIndex++)
+		{
+			if(keys.get(keyIndex).intValue() == keyPressedValue)
+			{
+				isRegistered = true;
+			}
+		}
+		if(!isRegistered)
+		{
+			keys.add((Integer)e.getKeyCode());
+		}
+		//System.out.println(timeheld);
+	}
+	public void keyReleased(KeyEvent e)
+	{
+		//System.out.println(keys.size());
+		int keyReleasedValue = e.getKeyCode();
+		for(int keyIndex = 0; keyIndex < keys.size(); keyIndex++)
+		{
+			if(keys.get(keyIndex).intValue() == keyReleasedValue)
+			{
+				keys.remove(keyIndex);
+			}
+		}
+		timeheld = 0;
+	}
+	public void keyClicked(KeyEvent e)
+	{
+
+	}
+	public void keyTyped(KeyEvent e)
+	{
+
+	}
+	public class DrawingPanel extends JPanel
+	{
+		public void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			sprites.get(characterImageDisplayed).draw(g);
+			testBrick.draw(g);
+			/*
+			for(int index = 0; index < sprites.size(); index++)
+			{
+				sprites.get(index).draw(g);
+			}
+			for(int y1 = 0; y1 < map[0].length; y1++)
+			{
+				for(int x1 = 0; x1 < map.length; x1++)
+				{
+					map[x1][y1].draw(g);
+					//System.out.println("Ran");
+				}
+			}*/
+			//sprites.get(5).draw(g); //Use a timer to change the image ever few milliseconds for now. Once the image index reaches 16, it should go back to index = 0
+		}
+	}
+	public class Runner implements Runnable
+	{
+		Thread t;
+		public Runner()
+		{
+			characterImageDisplayed = 0;
+		}
+		public void run()
+		{
+			try
+			{
+				while(true)
+				{
+					/*if(characterImageDisplayed == 15)
+					{
+						characterImageDisplayed = 0;
+					}
+					else
+					{
+						characterImageDisplayed++;
+					}
+					//System.out.println(characterImageDisplayed);
+					for(int keyIndex = 0; keyIndex < keys.size(); keyIndex++)
+					{
+						System.out.println(keys.get(keyIndex).intValue());
+					}*/
+					if(keys.contains(RIGHT))
+					{
+						xPos += speed;
+						facing = FACE_RIGHT;
+						if(timeheld < 1)
+						{
+							characterImageDisplayed = 12;
+						}
+						else
+						{
+							if(characterImageDisplayed < 12 || characterImageDisplayed > 16)
+							{
+								characterImageDisplayed = 12;
+							}
+							characterImageDisplayed++;
+							if(characterImageDisplayed == 16)
+							{
+								characterImageDisplayed = 12;
+							}
+						}
+					}
+					if(keys.contains(LEFT))
+					{
+						xPos -= speed;
+						facing = FACE_LEFT;
+						if(timeheld < 1)
+						{
+							characterImageDisplayed = 8;
+						}
+						else
+						{
+							if(characterImageDisplayed < 8 || characterImageDisplayed > 12)
+							{
+								characterImageDisplayed = 8;
+							}
+							characterImageDisplayed++;
+							if(characterImageDisplayed >= 12)
+							{
+								characterImageDisplayed = 8;
+							}
+						}
+					}
+					if(keys.contains(UP))
+					{
+						yPos -= speed;
+						facing = FACE_UP;
+						facing = FACE_LEFT;
+						if(timeheld < 1)
+						{
+							characterImageDisplayed = 4;
+						}
+						else
+						{
+							if(characterImageDisplayed < 4 || characterImageDisplayed > 8)
+							{
+								characterImageDisplayed = 4;
+							}
+							characterImageDisplayed++;
+							if(characterImageDisplayed >= 8)
+							{
+								characterImageDisplayed = 4;
+							}
+						}
+					}
+					if(keys.contains(DOWN))
+					{
+						yPos += speed;
+						facing = FACE_DOWN;
+						facing = FACE_LEFT;
+						if(timeheld < 1)
+						{
+							characterImageDisplayed = 0;
+						}
+						else
+						{
+							if(characterImageDisplayed < 0 || characterImageDisplayed > 4)
+							{
+								characterImageDisplayed = 0;
+							}
+							characterImageDisplayed++;
+							if(characterImageDisplayed >= 4)
+							{
+								characterImageDisplayed = 0;
+							}
+						}
+					}
+//					imageDisplayed++;
+					//if(imageDisplayed
+					for(int spriteIndex = 0; spriteIndex < sprites.size(); spriteIndex++)
+					{
+						sprites.get(spriteIndex).setPosition(xPos, yPos);
+					}
+					if(sprites.get(1).collidesDown(testBrick))
+					{
+						System.out.println("Collision");
+					}
+					repaint();
+					t.sleep(50);
+				}
+			}
+			catch(Exception e)
+			{
+				System.out.println("Game paused");
+			}
+		}
+		public void start()
+		{
+			if(t == null)
+			{
+				t = new Thread(this, "GameLoop");
+				t.start();
+			}
+		}
+	}
+}
