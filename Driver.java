@@ -11,10 +11,9 @@ import java.awt.image.BufferedImage;
 
 public class Driver extends JApplet implements KeyListener
 {
-	//IMPORTANT- Make sure Quinn uses the current Sprite class- it will be in the main branch of the Github repository
 	Sprite sprite; //16 Sprites- Name them similar to the file names I made to make it easier to keep track
 	BufferedImage brickImage; //16 BufferedImages
-	//MapGenerator gen;
+	MapGenerator gen;
 	ArrayList<BufferedImage> animations; //This array list will
 	ArrayList<Sprite> sprites;
 	ArrayList<Integer> keys;
@@ -22,16 +21,17 @@ public class Driver extends JApplet implements KeyListener
 	Sprite[][] map;
 	int[][] numberMap;
 	int xPos, yPos;
+	int mapXPos, mapYPos;
 	int characterImageDisplayed;
 	int facing = 0;
 	int speed = 5;
 	long timeheld = 0;
-	final int XSIZE = 150;
-	final int YSIZE = 150;
-	final int XINIT = 50;
-	final int YINIT = 50;
-	final int XROWS = 10;
-	final int YROWS = 6;
+	final int XSIZE = 50;
+	final int YSIZE = 50;
+	final int XINIT = 20;
+	final int YINIT = 20;
+	final int XROWS = 12;
+	final int YROWS = 12;
 	final int W = 87;
 	final int A = 65;
 	final int S = 83;
@@ -44,17 +44,19 @@ public class Driver extends JApplet implements KeyListener
 	final int FACE_DOWN = 1;
 	final int FACE_LEFT = 2;
 	final int FACE_UP = 3;
+	boolean canCreate;
 	Runner thread;
 	public void init()
 	{
 		animations  = new ArrayList<BufferedImage>();
 		sprites = new ArrayList<Sprite>();
 		keys = new ArrayList<Integer>();
-		//gen = new MapGenerator();
-		//map = new Sprite[XROWS][YROWS];
-		//numberMap = new int[XROWS][YROWS];
+		map = new Sprite[XROWS][YROWS];
+		numberMap = new int[XROWS][YROWS];
 		xPos = 50;
 		yPos = 50;
+		mapXPos = 20;
+		mapYPos = 20;
 		thread = new Runner();
 		setLayout(null);
 		setFocusable(true);
@@ -63,7 +65,7 @@ public class Driver extends JApplet implements KeyListener
 		setContentPane(new DrawingPanel());
 		try
 		{
-			brickImage = ImageIO.read(new File("brick.png"));
+			brickImage = ImageIO.read(new File("greenWall.jpg"));
 			animations.add(ImageIO.read(new File("Player1_Down.png")));
 			animations.add(ImageIO.read(new File("Player1_DownRun.png")));
 			animations.add(ImageIO.read(new File("Player1_Down2.png")));
@@ -81,7 +83,6 @@ public class Driver extends JApplet implements KeyListener
 			animations.add(ImageIO.read(new File("Player1_Right2.png")));
 			animations.add(ImageIO.read(new File("Player1_RightRun2.png")));
 
-			//Do this once for each character model - There should be 16 total
 		}
 		catch(Exception e)
 		{
@@ -92,30 +93,27 @@ public class Driver extends JApplet implements KeyListener
 			sprites.add(new Sprite(animations.get(index), index, index));
 		}
 		testBrick = new Sprite(brickImage, 300, 300);
-		/*
-		gen.create();
+		do
+		{
+			gen = new MapGenerator(10, 10);
+			canCreate = gen.create();
+		} while(!canCreate);
+		gen.buildFinalMap();
 		numberMap = gen.getMap();
-		System.out.println(map[0].length);
-		System.out.println(map.length);
 		for(int y1 = 0; y1 < map[0].length; y1++)
 		{
 			for(int x1 = 0; x1 < map.length; x1++)
 			{
-				//System.out.println("x1 = " + x1);
-				//System.out.println("y1 = " + y1);
-				if(y1 == 8)
-				{
-					System.out.println("Fuck");
-				}
-				map[x1][y1] = new Sprite(brickImage, x1, y1);
-				xPos += XSIZE;
-				map[x1][y1].setPosition(xPos, yPos);
-				//System.out.println("xPos = " + xPos);
+				//System.out.println("X = " + x1 + " | Mapxpos = " + mapXPos);
+				map[x1][y1] = new Sprite(brickImage, mapXPos, mapYPos);
+				mapXPos += XSIZE;
+				System.out.println((mapXPos + XSIZE));
 			}
-			xPos = XINIT;
-			yPos += YSIZE;
+			System.out.println();
+			mapXPos = XINIT;
+			mapYPos += YSIZE;
 		}
-		*/
+		gen.print();
 		thread.start();
 	}
 	public void keyPressed(KeyEvent e) //Multi-Key Listener
@@ -163,20 +161,17 @@ public class Driver extends JApplet implements KeyListener
 		{
 			super.paintComponent(g);
 			sprites.get(characterImageDisplayed).draw(g);
-			testBrick.draw(g);
-			/*
-			for(int index = 0; index < sprites.size(); index++)
-			{
-				sprites.get(index).draw(g);
-			}
 			for(int y1 = 0; y1 < map[0].length; y1++)
 			{
 				for(int x1 = 0; x1 < map.length; x1++)
 				{
-					map[x1][y1].draw(g);
+					if(numberMap[x1][y1] != 0)
+					{
+						map[x1][y1].draw(g);
+					}
 					//System.out.println("Ran");
 				}
-			}*/
+			}
 			//sprites.get(5).draw(g); //Use a timer to change the image ever few milliseconds for now. Once the image index reaches 16, it should go back to index = 0
 		}
 	}
