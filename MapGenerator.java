@@ -53,15 +53,10 @@ public class MapGenerator
                 map[x][y] = 0;
             }
         }
-        //System.out.println(r.nextInt(40));
-     /*   System.out.println(connectedList[0]);
-        System.out.println(connectedList[1]);
-        System.out.println(connectedList[2]);
-        System.out.println(connectedList[3]);
-        System.out.println("Ran"); */
         for(int key = 0; key < connectedList.length; key++)
         {
             int length = r.nextInt(7) + 1;
+           // System.out.println("Length #" + key + " = " + length);
             if(connectedList[key] >= 1 && connectedList[key] <= 8)//Down
             {
                 for(int down = 0; down < length; down++)
@@ -73,7 +68,6 @@ public class MapGenerator
                 }
                 if(isOverlapping("down", downx, downy))
                 {
-					//create();
 					canCreate = false;
 				}
             }
@@ -88,7 +82,6 @@ public class MapGenerator
                 }
     			if(isOverlapping("left", leftx, lefty))
     			{
-					//create();
 					canCreate = false;
 				}
             }
@@ -103,7 +96,6 @@ public class MapGenerator
                 }
                 if(isOverlapping("up", upx, upy))
                 {
-					//create();
 					canCreate = false;
 				}
             }
@@ -118,7 +110,6 @@ public class MapGenerator
                 }
                 if(isOverlapping("right", rightx, righty))
                 {
-					//create();
 					canCreate = false;
 				}
             }
@@ -399,10 +390,13 @@ public class MapGenerator
 		{
 			for(int x1 = 0; x1 < map.length; x1++)
 			{
-				System.out.println(map[x1][y1]);
 				finalMap[x1 + 1][y1 + 1] = map[x1][y1];
 			}
 		}
+	}
+	public int[][] getMap()
+	{
+		return finalMap;
 	}
     public void print()
     {
@@ -414,5 +408,10 @@ public class MapGenerator
             }
             System.out.println();
         }
+        for(int i = 0; i < connectedList.length; i++)
+        {
+			System.out.println(connectedList[i]);
+		}
+
     }
 }
