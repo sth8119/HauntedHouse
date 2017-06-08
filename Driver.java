@@ -13,23 +13,36 @@ public class Driver extends JApplet implements KeyListener
 {
 	Sprite sprite; //16 Sprites- Name them similar to the file names I made to make it easier to keep track
 	BufferedImage brickImage; //16 BufferedImages
+	BufferedImage ghostImage;
 	MapGenerator gen;
 	ArrayList<BufferedImage> animations; //This array list will
-	ArrayList<Sprite> sprites;
+	//ArrayList<Sprite> sprites;
+	ArrayList<Character> player1Sprites;
 	ArrayList<Integer> keys;
-	Sprite testBrick;
+	//Sprite ghost;
+	ArrayList<Sprite> ghosts;
 	Sprite[][] map;
+	ProjectileMotion pm;
+	Random r;
 	int[][] numberMap;
+	int attackSpeed, maxHealth, range;
 	int xPos, yPos;
+	int enemyX, enemyY;
 	int mapXPos, mapYPos;
 	int characterImageDisplayed;
 	int facing = 0;
 	int speed = 5;
-	long timeheld = 0;
+	//long timeheld = 0;
+	long timeUp;
+	long timeDown;
+	long timeRight;
+	long timeLeft;
 	final int XSIZE = 50;
 	final int YSIZE = 50;
 	final int XINIT = 20;
 	final int YINIT = 20;
+	final int ENEMYXSIZE = 30;
+	final int ENEMYYSIZE = 30;
 	final int XROWS = 12;
 	final int YROWS = 12;
 	final int W = 87;
@@ -45,18 +58,32 @@ public class Driver extends JApplet implements KeyListener
 	final int FACE_LEFT = 2;
 	final int FACE_UP = 3;
 	boolean canCreate;
+	boolean canPlace;
 	Runner thread;
 	public void init()
 	{
 		animations  = new ArrayList<BufferedImage>();
-		sprites = new ArrayList<Sprite>();
 		keys = new ArrayList<Integer>();
+		ghosts = new ArrayList<Sprite>();
 		map = new Sprite[XROWS][YROWS];
 		numberMap = new int[XROWS][YROWS];
-		xPos = 50;
-		yPos = 50;
+		canPlace = true;
+		r = new Random();
+		//80 + r.nextInt(500);
+		timeRight = 0;
+		timeLeft = 0;
+		timeUp = 0;
+		timeDown = 0;
+		xPos = 70;
+		yPos = 70;
 		mapXPos = 20;
 		mapYPos = 20;
+		enemyX = 300;
+		enemyY = 300;
+		attackSpeed = 1;
+		maxHealth = 1;
+		range = 1;
+		pm = new ProjectileMotion(2);
 		thread = new Runner();
 		setLayout(null);
 		setFocusable(true);
@@ -66,6 +93,7 @@ public class Driver extends JApplet implements KeyListener
 		try
 		{
 			brickImage = ImageIO.read(new File("greenWall.jpg"));
+			ghostImage = ImageIO.read(new File("ghost.png"));
 			animations.add(ImageIO.read(new File("Player1_Down.png")));
 			animations.add(ImageIO.read(new File("Player1_DownRun.png")));
 			animations.add(ImageIO.read(new File("Player1_Down2.png")));
@@ -88,11 +116,12 @@ public class Driver extends JApplet implements KeyListener
 		{
 			System.out.println("File Not Found");
 		}
-		for(int index = 0; index < animations.size(); index++)
+		//ghost = new Sprite(ghostImage, enemyX, enemyY);
+		for(int i = 0; i < 4; i++)
 		{
-			sprites.add(new Sprite(animations.get(index), index, index));
+			ghosts.add(new Sprite(ghostImage, 0, 0));
+			ghosts.get(i).setPosition(r.nextInt(500) + 50, r.nextInt(500) + 50);
 		}
-		testBrick = new Sprite(brickImage, 300, 300);
 		do
 		{
 			gen = new MapGenerator(10, 10);
@@ -113,6 +142,27 @@ public class Driver extends JApplet implements KeyListener
 			mapXPos = XINIT;
 			mapYPos += YSIZE;
 		}
+		do
+		{
+			canPlace = true;
+			player1Sprites = new ArrayList<Character>();
+			xPos = r.nextInt(500) + 80;
+			yPos = r.nextInt(500) + 80;
+			for(int index = 0; index < animations.size(); index++)
+			{
+				player1Sprites.add(new Character(animations.get(index), xPos, yPos, attackSpeed, maxHealth, range));
+			}
+			for(int y = 0; y < map[0].length; y++)
+			{
+				for(int x = 0; x < map.length; x++)
+				{
+					if(player1Sprites.get(0).collidesGeneral(map[x][y]) && numberMap[x][y] != 0)
+					{
+						canPlace = false;
+					}
+				}
+			}
+		}while(!canPlace);
 		gen.print();
 		thread.start();
 	}
@@ -120,7 +170,22 @@ public class Driver extends JApplet implements KeyListener
 	{
 		boolean isRegistered = false;
 		int keyPressedValue = e.getKeyCode();
-		timeheld++;
+		if(keyPressedValue == UP)
+		{
+			timeUp++;
+		}
+		if(keyPressedValue == DOWN)
+		{
+			timeDown++;
+		}
+		if(keyPressedValue == LEFT)
+		{
+			timeLeft++;
+		}
+		if(keyPressedValue == RIGHT)
+		{
+			timeRight++;
+		}
 		for(int keyIndex = 0; keyIndex < keys.size(); keyIndex++)
 		{
 			if(keys.get(keyIndex).intValue() == keyPressedValue)
@@ -145,7 +210,22 @@ public class Driver extends JApplet implements KeyListener
 				keys.remove(keyIndex);
 			}
 		}
-		timeheld = 0;
+		if(keyReleasedValue == UP)
+		{
+			timeUp = 0;
+		}
+		if(keyReleasedValue == DOWN)
+		{
+			timeDown = 0;
+		}
+		if(keyReleasedValue == LEFT)
+		{
+			timeLeft = 0;
+		}
+		if(keyReleasedValue == RIGHT)
+		{
+			timeRight++;
+		}
 	}
 	public void keyClicked(KeyEvent e)
 	{
@@ -160,7 +240,11 @@ public class Driver extends JApplet implements KeyListener
 		public void paintComponent(Graphics g)
 		{
 			super.paintComponent(g);
-			sprites.get(characterImageDisplayed).draw(g);
+			player1Sprites.get(characterImageDisplayed).draw(g);
+			for(int i = 0; i < ghosts.size(); i++)
+			{
+				ghosts.get(i).draw(g);
+			}
 			for(int y1 = 0; y1 < map[0].length; y1++)
 			{
 				for(int x1 = 0; x1 < map.length; x1++)
@@ -188,24 +272,11 @@ public class Driver extends JApplet implements KeyListener
 			{
 				while(true)
 				{
-					/*if(characterImageDisplayed == 15)
-					{
-						characterImageDisplayed = 0;
-					}
-					else
-					{
-						characterImageDisplayed++;
-					}
-					//System.out.println(characterImageDisplayed);
-					for(int keyIndex = 0; keyIndex < keys.size(); keyIndex++)
-					{
-						System.out.println(keys.get(keyIndex).intValue());
-					}*/
-					if(keys.contains(RIGHT))
+					if(keys.contains(RIGHT) && !keys.contains(UP) && !keys.contains(DOWN))
 					{
 						xPos += speed;
 						facing = FACE_RIGHT;
-						if(timeheld < 1)
+						if(timeRight < 1)
 						{
 							characterImageDisplayed = 12;
 						}
@@ -222,11 +293,11 @@ public class Driver extends JApplet implements KeyListener
 							}
 						}
 					}
-					if(keys.contains(LEFT))
+					if(keys.contains(LEFT) && !keys.contains(UP) && !keys.contains(DOWN))
 					{
 						xPos -= speed;
 						facing = FACE_LEFT;
-						if(timeheld < 1)
+						if(timeLeft < 1)
 						{
 							characterImageDisplayed = 8;
 						}
@@ -243,12 +314,12 @@ public class Driver extends JApplet implements KeyListener
 							}
 						}
 					}
-					if(keys.contains(UP))
+					if(keys.contains(UP) || (keys.contains(UP) && keys.contains(RIGHT)) || (keys.contains(UP) && keys.contains(LEFT)))
 					{
 						yPos -= speed;
 						facing = FACE_UP;
 						facing = FACE_LEFT;
-						if(timeheld < 1)
+						if(timeUp < 1)
 						{
 							characterImageDisplayed = 4;
 						}
@@ -265,12 +336,12 @@ public class Driver extends JApplet implements KeyListener
 							}
 						}
 					}
-					if(keys.contains(DOWN))
+					if(keys.contains(DOWN) || (keys.contains(DOWN) && keys.contains(RIGHT)) || (keys.contains(DOWN) && keys.contains(LEFT)))
 					{
 						yPos += speed;
 						facing = FACE_DOWN;
 						facing = FACE_LEFT;
-						if(timeheld < 1)
+						if(timeDown < 1)
 						{
 							characterImageDisplayed = 0;
 						}
@@ -287,16 +358,18 @@ public class Driver extends JApplet implements KeyListener
 							}
 						}
 					}
-//					imageDisplayed++;
-					//if(imageDisplayed
-					for(int spriteIndex = 0; spriteIndex < sprites.size(); spriteIndex++)
+					for(int spriteIndex = 0; spriteIndex < player1Sprites.size(); spriteIndex++)
 					{
-						sprites.get(spriteIndex).setPosition(xPos, yPos);
+						player1Sprites.get(spriteIndex).setPosition(xPos, yPos);
 					}
-					if(sprites.get(1).collidesDown(testBrick))
+					//Ghost movement
+					for(int i = 0; i < ghosts.size(); i++)
 					{
-						System.out.println("Collision");
+						pm.calculate(ghosts.get(i).getX(), ghosts.get(i).getY(), xPos, yPos);
+						ghosts.get(i).setPosition(pm.getEnemyX(), pm.getEnemyY());
 					}
+					//Ghost movement
+
 					repaint();
 					t.sleep(50);
 				}

@@ -2,15 +2,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 public class Character extends Sprite
 {
-	int speed;
 	int health;
 	int attackSpeed;
 	int maxHealth;
 	int range;
-	public Character(BufferedImage image, int x, int y, int speed, int attackSpeed, int maxHealth, int range)
+	public Character(BufferedImage image, int x, int y, int attackSpeed, int maxHealth, int range)
 	{
 		super(image, x, y);
-		this.speed = speed;
 		this.attackSpeed = attackSpeed;
 		this.maxHealth = maxHealth;
 		this.range = range;
@@ -66,10 +64,6 @@ public class Character extends Sprite
 		}
 		return collides;
 	}
-	public void setSpeed(int speed)
-	{
-		this.speed = speed;
-	}
 	public void setHealth(int health)
 	{
 		this.health = health;
@@ -85,10 +79,6 @@ public class Character extends Sprite
 	public int getMaxHealth()
 	{
 		return maxHealth;
-	}
-	public int getSpeed()
-	{
-		return speed;
 	}
 	public int getHealth()
 	{
