@@ -20,7 +20,8 @@ public class Driver extends JApplet implements KeyListener
 	ArrayList<Character> player1Sprites;
 	ArrayList<Integer> keys;
 	//Sprite ghost;
-	ArrayList<Sprite> ghosts;
+	//ArrayList<Sprite> ghosts;
+	ArrayList<Enemy> ghosts;
 	Sprite[][] map;
 	ProjectileMotion pm;
 	Random r;
@@ -64,7 +65,7 @@ public class Driver extends JApplet implements KeyListener
 	{
 		animations  = new ArrayList<BufferedImage>();
 		keys = new ArrayList<Integer>();
-		ghosts = new ArrayList<Sprite>();
+		ghosts = new ArrayList<Enemy>();
 		map = new Sprite[XROWS][YROWS];
 		numberMap = new int[XROWS][YROWS];
 		canPlace = true;
@@ -119,7 +120,7 @@ public class Driver extends JApplet implements KeyListener
 		//ghost = new Sprite(ghostImage, enemyX, enemyY);
 		for(int i = 0; i < 4; i++)
 		{
-			ghosts.add(new Sprite(ghostImage, 0, 0));
+			ghosts.add(new Enemy(ghostImage, 0, 0));
 			ghosts.get(i).setPosition(r.nextInt(500) + 50, r.nextInt(500) + 50);
 		}
 		do
@@ -136,9 +137,7 @@ public class Driver extends JApplet implements KeyListener
 				//System.out.println("X = " + x1 + " | Mapxpos = " + mapXPos);
 				map[x1][y1] = new Sprite(brickImage, mapXPos, mapYPos);
 				mapXPos += XSIZE;
-				System.out.println((mapXPos + XSIZE));
 			}
-			System.out.println();
 			mapXPos = XINIT;
 			mapYPos += YSIZE;
 		}
@@ -197,7 +196,6 @@ public class Driver extends JApplet implements KeyListener
 		{
 			keys.add((Integer)e.getKeyCode());
 		}
-		//System.out.println(timeheld);
 	}
 	public void keyReleased(KeyEvent e)
 	{
@@ -365,7 +363,15 @@ public class Driver extends JApplet implements KeyListener
 					//Ghost movement
 					for(int i = 0; i < ghosts.size(); i++)
 					{
-						pm.calculate(ghosts.get(i).getX(), ghosts.get(i).getY(), xPos, yPos);
+						if(Math.sqrt(Math.pow(xPos - ghosts.get(i).getX(), 2) + Math.pow(yPos - ghosts.get(i).getY(), 2)) < 150)
+						{
+							pm.calculate(ghosts.get(i).getX(), ghosts.get(i).getY(), xPos, yPos);
+						}
+						else
+						{
+							pm.calculate(ghosts.get(i).getX(), ghosts.get(i).getY(), xPos + ghosts.get(i).getRandomX(), yPos + ghosts.get(i).getRandomY());
+						}
+						System.out.println(ghosts.get(i).getRandomX());
 						ghosts.get(i).setPosition(pm.getEnemyX(), pm.getEnemyY());
 					}
 					//Ghost movement
