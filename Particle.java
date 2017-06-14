@@ -49,6 +49,7 @@ public class Particle
 	}
 	public void draw(Graphics g)
 	{
+		g.setColor(Color.GREEN);
 		g.fillOval(xpos, ypos, WIDTH, HEIGHT);
 	}
 }

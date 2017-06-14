@@ -84,6 +84,10 @@ public class Character extends Sprite
 	{
 		return health;
 	}
+	public void loseHealth()
+	{
+		health--;
+	}
 	public int getASpeed()
 	{
 		return attackSpeed;

@@ -1,8 +1,7 @@
 public class ProjectileMotion
 {
-	int speedMultiplier;
-	double angle, xDelta, yDelta, xVel, yVel, xRaw, yRaw;
-	public ProjectileMotion(int speedMultiplier)
+	double angle, xDelta, yDelta, xVel, yVel, xRaw, yRaw, speedMultiplier;
+	public ProjectileMotion(double speedMultiplier)
 	{
 		this.speedMultiplier = speedMultiplier;
 	}
@@ -36,8 +35,12 @@ public class ProjectileMotion
 	{
 		return (int)Math.round(yRaw);
 	}
-	public void setSpeedMultiplier(int speedMultiplier)
+	public void setSpeedMultiplier(double speedMultiplier)
 	{
 		this.speedMultiplier = speedMultiplier;
+	}
+	public void increaseSpeedMultiplier()
+	{
+		speedMultiplier += .3;
 	}
 }

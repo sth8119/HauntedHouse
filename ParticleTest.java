@@ -15,7 +15,7 @@ public class ParticleTest extends JApplet implements MouseListener
 	{
 		fire = false;
 		particleList = new ArrayList<Particle>();
-		particleN = 200;
+		particleN = 25;
 		initializeParticles();
 		setLayout(null);
 		addMouseListener(this);
